@@ -1,0 +1,5 @@
+@import "mixins";
+
+.product--thumbnail {
+    @include product--thumbnail();
+}
