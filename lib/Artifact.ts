@@ -15,7 +15,7 @@ export class ArtifactCollection {
     constructor(artifacts: Array<Artifact> = []) {
         this._container = new Set();
 
-        this.addArtifacts(artifacts);
+        this.addMultiple(artifacts);
     }
 
     get artifacts(): Array<Artifact> {
@@ -44,31 +44,17 @@ export class ArtifactCollection {
         return results;
     }
 
-    addArtifacts(artifacts: Array<Artifact>) {
+    addMultiple(artifacts: Array<Artifact>) {
         for (let artifact of artifacts) {
-            this.addArtifact(artifact);
+            this.add(artifact);
         }
 
         return this;
     }
 
-    addArtifact(artifact: Artifact) {
+    add(artifact: Artifact) {
         this._container.add(artifact);
 
         return this;
-    }
-};
-
-export type State = {
-    artifacts: ArtifactCollection,
-    error?: {
-        state: State,
-        artifact: Artifact,
-        message: string,
-        location: {
-            name: string,
-            line?: number,
-            column?: number
-        }
     }
 };
