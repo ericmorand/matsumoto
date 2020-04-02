@@ -1,25 +1,28 @@
 import {TransformFactory} from "./vendor/Transform";
-import { outputFile } from "fs-extra";
-import { join, relative } from "path";
+import {outputFile} from "fs-extra";
+import {Artifact} from "./vendor/Artifact";
+import {State} from "./vendor/State";
 
-type Options = {
+type Symbolism = {
     error: symbol
 };
 
-export const write: TransformFactory<Options> = (o) => () => (input) => {
-    return Promise.resolve(input).then(input => {
-        let promises = [];
-
-        for (let artifact of input.artifacts) {
-            if (artifact.type !== o.error) {
-                promises.push(new Promise((resolve) => {
-                    outputFile(join('www', relative('test', artifact.name)), artifact.data, (err) => {
+export const write: TransformFactory<Symbolism> = (symbolism) => () => (input) => {
+    return Promise.resolve<State>(input)
+        .then((input) => {
+            return Promise.all<Artifact>(input.artifacts.map((artifact) => {
+                return new Promise((resolve) => {
+                    if (artifact.type !== symbolism.error) {
+                        outputFile(artifact.name, artifact.data, () => {
+                            resolve(artifact);
+                        });
+                    } else {
                         resolve(artifact);
-                    });
-                }));
-            }
-        }
-
-        return Promise.all(promises).then(() => input);
-    });
+                    }
+                })
+            }))
+        })
+        .then((artifacts) => {
+            return new State(artifacts)
+        });
 };

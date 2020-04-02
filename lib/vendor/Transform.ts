@@ -1,8 +1,8 @@
-import {State} from "./Artifact";
+import {State} from "./State";
 
-type Configuration = {
+type Symbolism = {
     [key: string]: symbol
 };
 
 export type Transform = (input: State | Promise<State>) => Promise<State>;
-export type TransformFactory<C extends Configuration, O = any> = (configuration?: C) => (options?: O) => Transform;
+export type TransformFactory<S extends Symbolism, O = any> = (symbolism: S) => (options?: O) => Transform;
